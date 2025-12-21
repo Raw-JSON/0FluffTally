@@ -1,79 +1,58 @@
-// 0FluffTally - Core Logic
 let count = 0;
-const STORAGE_KEY = '0fluff_tally_history';
 
-const elements = {
+const nodes = {
     display: document.getElementById('display'),
-    tallyBtn: document.getElementById('tally-btn'),
-    stopBtn: document.getElementById('stop-btn'),
-    resetBtn: document.getElementById('reset-btn'),
-    nameInput: document.getElementById('counter-name'),
-    notesInput: document.getElementById('counter-notes'),
-    historyList: document.getElementById('history-list'),
-    clearBtn: document.getElementById('clear-history')
+    btn: document.getElementById('tally-btn'),
+    save: document.getElementById('stop-btn'),
+    history: document.getElementById('history-list'),
+    name: document.getElementById('counter-name'),
+    notes: document.getElementById('counter-notes')
 };
 
-// Initial Load
-document.addEventListener('DOMContentLoaded', renderHistory);
-
-// Tally Action
-elements.tallyBtn.addEventListener('click', () => {
+// --- CORE ACTIONS ---
+nodes.btn.onclick = () => {
     count++;
-    updateDisplay();
-});
+    nodes.display.innerText = count;
+    TallyUI.animatePop(nodes.display);
+    TallyUI.vibrate('light');
+};
 
-// Reset Action
-elements.resetBtn.addEventListener('click', () => {
-    if (confirm('Reset current count?')) {
-        count = 0;
-        updateDisplay();
-    }
-});
-
-// Stop & Save
-elements.stopBtn.addEventListener('click', () => {
-    if (count === 0) return alert("Nothing to save, Jacob.");
+nodes.save.onclick = () => {
+    if (count === 0) return TallyUI.showToast("Count is empty");
 
     const session = {
         id: Date.now(),
-        name: elements.nameInput.value || "Untitled Counter",
-        count: count,
-        notes: elements.notesInput.value,
-        date: new Date().toLocaleString()
+        name: nodes.name.value || "Untitled Session",
+        val: count,
+        note: nodes.notes.value,
+        time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
     };
 
-    saveSession(session);
-    count = 0;
-    elements.nameInput.value = '';
-    elements.notesInput.value = '';
-    updateDisplay();
+    TallyStorage.save(session);
+    resetSession();
     renderHistory();
-});
+    TallyUI.showToast("Log Saved");
+};
 
-elements.clearBtn.addEventListener('click', () => {
-    if (confirm('Wipe all history?')) {
-        localStorage.removeItem(STORAGE_KEY);
-        renderHistory();
-    }
-});
-
-function updateDisplay() {
-    elements.display.innerText = count;
-}
-
-function saveSession(session) {
-    const history = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    history.unshift(session);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+function resetSession() {
+    count = 0;
+    nodes.display.innerText = "0";
+    nodes.name.value = "";
+    nodes.notes.value = "";
 }
 
 function renderHistory() {
-    const history = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    elements.historyList.innerHTML = history.map(item => `
+    const data = TallyStorage.getAll();
+    nodes.history.innerHTML = data.map(item => `
         <div class="history-item">
-            <strong>${item.name}</strong>: <span>${item.count} counts</span><br>
-            <small style="color:var(--dim)">${item.date}</small>
-            ${item.notes ? `<p style="margin:5px 0 0; font-size:0.9rem; opacity:0.8">${item.notes}</p>` : ''}
+            <div style="display:flex; justify-content:space-between">
+                <strong>${item.name}</strong>
+                <span style="color:var(--accent)">${item.val}</span>
+            </div>
+            <p style="font-size:0.8rem; color:var(--dim); margin:4px 0">${item.note}</p>
         </div>
     `).join('');
 }
+
+// Initial Render
+renderHistory();
