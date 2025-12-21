@@ -3,36 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>0FluffTally | RawJSON</title>
+    <title>0FluffTally</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>0FluffTally</h1>
-            <p class="subtitle">Intentional counting. Zero fluff.</p>
+            <div id="session-stats">Ready for new session</div>
         </header>
 
-        <section id="setup-area">
-            <input type="text" id="counter-name" placeholder="Counter Name (e.g., Meeting A)">
-            <textarea id="counter-notes" placeholder="Optional notes..."></textarea>
-        </section>
-
-        <section id="counter-area">
+        <main id="counter-module">
             <div id="display">0</div>
-            <button id="tally-btn">TAP TO COUNT</button>
-            <div class="action-row">
-                <button id="stop-btn" class="secondary">Stop & Save</button>
+            <button id="tally-btn" aria-label="Increment Counter">COUNT</button>
+            
+            <div class="input-group">
+                <input type="text" id="counter-name" placeholder="Session Label (e.g. Meeting)">
+                <textarea id="counter-notes" placeholder="Add context/notes..."></textarea>
+            </div>
+
+            <div class="action-grid">
+                <button id="stop-btn" class="primary">Complete & Save</button>
                 <button id="reset-btn" class="danger">Reset</button>
             </div>
-        </section>
+        </main>
 
-        <section id="history-area">
-            <h3>Session History</h3>
+        <section id="history-module">
+            <div class="history-header">
+                <h3>Logs</h3>
+                <button id="clear-history" class="text-link">Wipe All</button>
+            </div>
             <div id="history-list"></div>
-            <button id="clear-history" class="text-btn">Clear All History</button>
         </section>
     </div>
+
+    <div id="toast-container"></div>
+
+    <script src="storage.js"></script>
+    <script src="ui.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
