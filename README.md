@@ -4,6 +4,8 @@
 
 **0FluffTally** is a minimalist, privacy-first manual counter. It is built to quantify qualitative events—like meeting frequencies, task repetitions, or inventory checks—where background automation fails and human intent is required.
 
+**[🔗 Open 0FluffTally](https://raw-json.github.io/0FluffTally/)**
+
 ---
 
 ## 🚀 Features
