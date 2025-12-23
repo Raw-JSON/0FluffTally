@@ -4,12 +4,16 @@ const nodes = {
     display: document.getElementById('display'),
     btn: document.getElementById('tally-btn'),
     save: document.getElementById('stop-btn'),
+    reset: document.getElementById('reset-btn'),
+    clearHistory: document.getElementById('clear-history'),
     history: document.getElementById('history-list'),
     name: document.getElementById('counter-name'),
     notes: document.getElementById('counter-notes')
 };
 
 // --- CORE ACTIONS ---
+
+// Count Up
 nodes.btn.onclick = () => {
     count++;
     nodes.display.innerText = count;
@@ -17,6 +21,7 @@ nodes.btn.onclick = () => {
     TallyUI.vibrate('light');
 };
 
+// Save Session
 nodes.save.onclick = () => {
     if (count === 0) return TallyUI.showToast("Count is empty");
 
@@ -32,6 +37,22 @@ nodes.save.onclick = () => {
     resetSession();
     renderHistory();
     TallyUI.showToast("Log Saved");
+};
+
+// Reset Current (Fix)
+nodes.reset.onclick = () => {
+    if (count > 0 && confirm("Reset current counter?")) {
+        resetSession();
+    }
+};
+
+// Wipe All History (Fix)
+nodes.clearHistory.onclick = () => {
+    if (confirm("Are you sure you want to delete all history?")) {
+        TallyStorage.clear();
+        renderHistory();
+        TallyUI.showToast("History Cleared");
+    }
 };
 
 function resetSession() {
